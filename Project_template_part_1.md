@@ -68,10 +68,15 @@
 
 Чтобы добавить ссылку в файл Readme.md, нужно использовать синтаксис Markdown. Это делают так:
 
-```markdown
 [Context](./part1/Context.puml)
-```
+
+**Решение** 
+
 ![img.png](img.png)
+
+**Легента**
+
+![alt text](image.png)
 
 # Задание 2. Проектирование микросервисной архитектуры
 
@@ -79,13 +84,30 @@
 
 **Диаграмма контейнеров (Containers)**
 
-Добавьте диаграмму.
+**Решение**
+
+[Container](./part1/Container.puml)
+![alt text](container.png)
 
 **Диаграмма компонентов (Components)**
 
-Добавьте диаграмму для каждого из выделенных микросервисов.
+**Решение**
+
+[Component Apigateway](./part1/Component_apigateway.puml)
+![alt text](apigw.png)
+
+[Component DeviceManagmentSystem](./part1/Component_managment.puml)
+![alt text](managment.png)
+
+[Component telemetry](./part1/Component_telemetry.puml)
+![alt text](telemetry.png)
+
+**Легента**
+
+![img_1.png](img_1.png)
 
 **Диаграмма кода (Code)**
+
 
 Добавьте одну диаграмму или несколько.
 

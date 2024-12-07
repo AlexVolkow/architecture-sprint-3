@@ -1,0 +1,43 @@
+@startuml
+title Система "Теплый дом"
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(TelemetrySystem, "Управление телеметрией") {
+    Container(TelemetryAPI, "Telemetry API", "Java, Spring", "Предоставляет АПИ для доступа к телеметрии")
+    ComponentQueue(Queue, "Queue", "Kafka", "Шина данных для телеметрии")
+    ComponentDb(TelemetryDatabase, "Database", "MongoDB", "Хранилище телметрии")
+}
+
+Container_Boundary(DeviceManagmentSystem, "Управление устройствами") {
+    Container(ManagmentAPI, "Managment API", "Java, Spring", "Предоставляет АПИ для управления устройствами по протоколу REST")
+}
+
+Container(TelemetryAPI, "Управление устройствами", "Java, Spring") {
+  Component(TelemetryExportController, "TelemetryExportController", "Обработка запросов на экспорт показания")
+  Component(TelemetrySearchController, "TelemetrySearchController", "Обработка запросов на получение показаний")
+  Component(MetricSearchEngine, "MetricSearchEngine", "Реализует функциональность чтения показаний")
+  Component(MetricService, "MetricService", "Сервис управления показаниями с устройства")
+  Component(MetricExportHandler, "MetricExportHandler", "Сервис управления показаниями с устройства")
+  Component(SensorMetaProvider, "SensorMetaProvider", "Сервис мета информации об устройствах")
+  Component(RepositoryLayer, "Repository Layer", "Слой доступа к данным")
+  Component(CacheLayer, "Cache Layer", "Слой кеширования (InMemory)")
+}
+
+Rel(TelemetrySearchController,MetricSearchEngine,"Вызывает функции чтения показания")
+Rel(TelemetryExportController,Queue,"Ставит показание в очередь на обработку")
+Rel(MetricExportHandler,Queue,"Обрабатыает показание из очереди")
+Rel(MetricExportHandler,RepositoryLayer,"Записывает показание в БД")
+Rel(MetricService,SensorMetaProvider,"Получет мето информацию об устройствах")
+Rel(SensorMetaProvider,ManagmentAPI,"Получает мета-информацию об устройстве")
+Rel(SensorMetaProvider,CacheLayer,"Получает мета-информацию об устройстве из Кеша")
+Rel(MetricSearchEngine,RepositoryLayer,"Получает телеметрию из БД")
+Rel(MetricSearchEngine,CacheLayer,"Получает телеметрию из Кеша")
+
+Rel(MetricService,RepositoryLayer,"Читает/пишет показания в БД")
+
+Rel(RepositoryLayer,TelemetryDatabase,"Читает/Пишет данные")
+
+@enduml
