@@ -1,0 +1,86 @@
+@startuml
+title Система "Теплый дом". Класс ComandExecutor
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+interface Command {
+    +String name
+
+    +void execute()
+}
+
+class SensorActivationCommand {
+    +String name
+    +Sensor sensor
+    +User user
+    +void execute()
+}
+
+class CommandFactory {
+    +Command createSensorActiveCommand(Sensor Sensor)
+}
+
+class CommandExecutor {
+    +void execute(Command command)
+}
+
+class Sensor {
+    +UUID sensorId
+    +User user
+    +SensorType sensorType
+    +SensorState sensorState
+    +List<Metric> metrics
+
+    +void turnOn()
+    +void turnOff()
+    +void getMetrics(int count)
+}
+
+interface Metric  {
+    +UUID metricId
+    +ValueType valueType
+}
+
+enum ValueType {
+    DECIMAL
+    BOOLEAN
+    STREAM
+}
+
+enum SensorType {
+    THERMOMETER
+    CAMERA
+    GATE
+}
+
+enum SensorState {
+    ACTIVE
+    DISABLE
+    ERROR
+}
+
+class SensorRegistry {
+    +List<Sensor> sensors
+
+    +void register(Sensor sensor)
+    +void delete(Sensor sensor)
+}
+
+class User {
+    +UUID userId
+    +String name
+}
+
+
+Sensor "1" -- "0..*" Metric : Содержит показания
+Sensor "1" -- "1" SensorType : Имеет тип
+Sensor "1" -- "1" SensorState : Имеет статус
+User "1" -- "0..*" Sensor : Владеет
+Command <|.. SensorActivationCommand: Реализует
+Metric "1" -- "1" ValueType : Имеет тип счетчика
+CommandExecutor "1" -- "1" SensorRegistry : Использует
+Sensor "1" -- "0..*" SensorRegistry : Хранит
+
+@enduml 
