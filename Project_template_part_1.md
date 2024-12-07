@@ -87,6 +87,7 @@
 **Решение**
 
 [Container](./part1/Container.puml)
+
 ![alt text](container.png)
 
 **Диаграмма компонентов (Components)**
