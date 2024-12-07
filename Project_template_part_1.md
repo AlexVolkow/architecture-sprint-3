@@ -94,12 +94,15 @@
 **Решение**
 
 [Component Apigateway](./part1/Component_apigateway.puml)
+
 ![alt text](apigw.png)
 
 [Component DeviceManagmentSystem](./part1/Component_managment.puml)
+
 ![alt text](managment.png)
 
 [Component telemetry](./part1/Component_telemetry.puml)
+
 ![alt text](telemetry.png)
 
 **Легента**
@@ -108,8 +111,9 @@
 
 **Диаграмма кода (Code)**
 
+[Code](./part1/Code.puml)
 
-Добавьте одну диаграмму или несколько.
+![img_2.png](img_2.png)
 
 # Задание 3. Разработка ER-диаграммы
 
