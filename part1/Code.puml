@@ -11,36 +11,39 @@ interface Command {
     +void execute()
 }
 
-class SensorActivationCommand {
+class DeviceActivationCommand {
     +String name
-    +Sensor sensor
+    +Device Device
     +User user
     +void execute()
 }
 
 class CommandFactory {
-    +Command createSensorActiveCommand(Sensor Sensor)
+    +Command createDeviceActiveCommand(Device Device)
 }
 
 class CommandExecutor {
     +void execute(Command command)
 }
 
-class Sensor {
-    +UUID sensorId
+class Device {
+    +UUID deviceId
     +User user
-    +SensorType sensorType
-    +SensorState sensorState
-    +List<Metric> metrics
+    +House house
+    +DeviceType deviceType
+    +DeviceState deviceState
+    +List<TelemetryData> telemetry
 
     +void turnOn()
     +void turnOff()
-    +void getMetrics(int count)
+    +List<TelemetryData> getTelemetryData(int count)
 }
 
-interface Metric  {
-    +UUID metricId
+interface TelemetryData  {
+    +UUID telemetryId
     +ValueType valueType
+
+    +Object value()
 }
 
 enum ValueType {
@@ -49,23 +52,22 @@ enum ValueType {
     STREAM
 }
 
-enum SensorType {
-    THERMOMETER
-    CAMERA
-    GATE
+class DeviceType {
+    +UUID typeId
+    +String name
 }
 
-enum SensorState {
+enum DeviceState {
     ACTIVE
     DISABLE
     ERROR
 }
 
-class SensorRegistry {
-    +List<Sensor> sensors
+class DeviceRegistry {
+    +List<Device> Devices
 
-    +void register(Sensor sensor)
-    +void delete(Sensor sensor)
+    +void register(Device Device)
+    +void delete(Device Device)
 }
 
 class User {
@@ -74,13 +76,39 @@ class User {
 }
 
 
-Sensor "1" -- "0..*" Metric : Содержит показания
-Sensor "1" -- "1" SensorType : Имеет тип
-Sensor "1" -- "1" SensorState : Имеет статус
-User "1" -- "0..*" Sensor : Владеет
-Command <|.. SensorActivationCommand: Реализует
-Metric "1" -- "1" ValueType : Имеет тип счетчика
-CommandExecutor "1" -- "1" SensorRegistry : Использует
-Sensor "1" -- "0..*" SensorRegistry : Хранит
+class House {
+    +UUID houseId
+    +String name
+    +User user
+    +Coordinates Coordinates
+}
+
+
+class Module {
+    +UUID moduleId
+    +String name
+    +User user
+    +List<Device> devices
+    +ModuleState moduleState
+
+    +void turnOn()
+    +void turnOff()
+}
+
+enum ModuleState {
+    ACTIVE
+    INACTIVE
+}
+
+Device "1" -- "0..*" TelemetryData : Содержит показания
+Device "1" -- "1" DeviceType : Имеет тип
+Device "1" -- "1" DeviceState : Имеет статус
+House "1" -- "0..*" Module : Установлено
+Module "1" -- "0..*" Device : Входят в модуль
+User "1" -- "0..*" House : Владеет
+Command <|.. DeviceActivationCommand: Реализует
+TelemetryData "1" -- "1" ValueType : Имеет тип счетчика
+CommandExecutor "1" -- "1" DeviceRegistry : Использует
+Device "1" -- "0..*" DeviceRegistry : Хранит
 
 @enduml 

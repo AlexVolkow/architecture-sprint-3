@@ -21,7 +21,7 @@ Container(TelemetryAPI, "Управление устройствами", "Java, 
   Component(MetricSearchEngine, "MetricSearchEngine", "Реализует функциональность чтения показаний")
   Component(MetricService, "MetricService", "Сервис управления показаниями с устройства")
   Component(MetricExportHandler, "MetricExportHandler", "Сервис управления показаниями с устройства")
-  Component(SensorMetaProvider, "SensorMetaProvider", "Сервис мета информации об устройствах")
+  Component(DeviceMetaProvider, "DeviceMetaProvider", "Сервис мета информации об устройствах")
   Component(RepositoryLayer, "Repository Layer", "Слой доступа к данным")
   Component(CacheLayer, "Cache Layer", "Слой кеширования (InMemory)")
 }
@@ -30,9 +30,9 @@ Rel(TelemetrySearchController,MetricSearchEngine,"Вызывает функци�
 Rel(TelemetryExportController,Queue,"Ставит показание в очередь на обработку")
 Rel(MetricExportHandler,Queue,"Обрабатыает показание из очереди")
 Rel(MetricExportHandler,RepositoryLayer,"Записывает показание в БД")
-Rel(MetricService,SensorMetaProvider,"Получет мето информацию об устройствах")
-Rel(SensorMetaProvider,ManagmentAPI,"Получает мета-информацию об устройстве")
-Rel(SensorMetaProvider,CacheLayer,"Получает мета-информацию об устройстве из Кеша")
+Rel(MetricService,DeviceMetaProvider,"Получет мето информацию об устройствах")
+Rel(DeviceMetaProvider,ManagmentAPI,"Получает мета-информацию об устройстве")
+Rel(DeviceMetaProvider,CacheLayer,"Получает мета-информацию об устройстве из Кеша")
 Rel(MetricSearchEngine,RepositoryLayer,"Получает телеметрию из БД")
 Rel(MetricSearchEngine,CacheLayer,"Получает телеметрию из Кеша")
 
