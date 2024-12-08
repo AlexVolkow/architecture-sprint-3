@@ -1,0 +1,64 @@
+@startuml
+title Система "Теплый дом". ER диаграмма
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+
+entity Device {
+    *device_id: uuid
+    --
+    *house_id: uuid <<FK>>
+    *device_type_id: uuid <<FK>>
+    *device_state: text
+    *serial_number: text
+}
+
+entity TelemetryData  {
+    *telemetry_id: uuid
+    --
+    *value_type: text
+    int_value: int
+    decimal_value: decimal
+    byte_value: bytea
+}
+
+entity User {
+    *user_id: uuid
+    --
+    *name: text
+    *role: text
+    phone: text
+    email: text
+}
+
+entity House {
+    *house_id: uuid
+    --
+    *name: text
+    *user_id: uuid <<FK>>
+}
+
+entity Module {
+    *module_id: uuid
+    --
+    *name: text
+    *house_id: uuid <<FK>>
+    *module_state: text
+}
+
+entity DeviceType {
+  *device_type_id: uuid
+  --
+  *name: text
+}
+
+User ||--o{ House
+House ||--o{ Device
+Device ||--o{ TelemetryData
+Module ||--|{ Device
+House ||--o{ Module
+Device }o--|| DeviceType
+
+@enduml 

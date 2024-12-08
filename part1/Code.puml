@@ -28,7 +28,6 @@ class CommandExecutor {
 
 class Device {
     +UUID deviceId
-    +User user
     +House house
     +DeviceType deviceType
     +DeviceState deviceState
@@ -73,6 +72,9 @@ class DeviceRegistry {
 class User {
     +UUID userId
     +String name
+    +String role
+    +String email
+    +String phone
 }
 
 
@@ -87,7 +89,7 @@ class House {
 class Module {
     +UUID moduleId
     +String name
-    +User user
+    +House house
     +List<Device> devices
     +ModuleState moduleState
 
