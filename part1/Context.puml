@@ -8,7 +8,7 @@ top to bottom direction
 Person(user, "User", "Пользователь системы умный дом")
 Person(admin, "Administrator", "Администратор системы")
 
-System(WarmHouseSystem, "Система Теплный дом", "Система управления датчиками и параметрами отопления", "Java")
+System(WarmHouseSystem, "Система Теплный дом", "Система управления датчиками и параметрами отопления", "Java, Spring Boot, PostgreSQL")
 
 Container_Boundary(WarmHouseSystem, "Панель управления", "Java, Spring Boot, PostgreSQL") {
     Container(WebApp, "Web ", "Html, Css", "Веб сайт для настройки и управления системой")
