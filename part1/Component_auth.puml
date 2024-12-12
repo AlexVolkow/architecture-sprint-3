@@ -1,0 +1,32 @@
+@startuml
+title Система "Теплый дом"
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(Auth, "Сервис аутентификации") {
+    Container(AuthAPI, "Auth API", "Java, Spring", "Предоставляет АПИ авторизации, аутентификации и регистрации пользователей")
+    ComponentDb(AuthDatabase, "Database", "PostgreSQL", "Хранилище информации об пользователях")
+}
+
+Container(AuthAPI, "Управление устройствами", "Java, Spring") {
+  Component(AuthController, "AuthController", "Обработка запросов по аутентификации и авторизации")
+  Component(RegisterController, "RegisterController", "Обработка запросов регистрацию клиентов")
+  Component(UserController, "ModuleController", "Обработка запросов получение инфомрации о пользователях и управления их настройками")
+  Component(AuthService, "AuthService", "Обработка запросов на авторизацию и аутентфикацию")
+  Component(RegisterService, "RegisterService", "Обработка запросов на регистрацию клиентов")
+  Component(UserService, "UserService", "Обработка запросов на управлением пользователями")
+  Component(RepositoryLayer, "Repository Layer", "Слой доступа к данным")
+}
+
+Rel(AuthController,AuthService,"Аутентифицирует клиента")
+Rel(RegisterController,RegisterService,"Регистрирует клиента")
+Rel(UserController,UserService,"Читает/пишет данные о пользователях")
+Rel(UserService,RepositoryLayer,"Читает/пишет данные о пользователях")
+Rel(RegisterService,RepositoryLayer,"Регистрирует клиента")
+Rel(AuthService,RepositoryLayer,"Управляет настройками аутентификации")
+
+Rel(RepositoryLayer,AuthDatabase,"Читает/Пишет данные")
+
+@enduml

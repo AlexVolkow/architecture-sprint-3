@@ -1,0 +1,88 @@
+@startuml
+title Система "Теплый дом"
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "User", "Пользователь системы умный дом")
+Person(admin, "Administrator", "Администратор системы")
+
+System(Backoffice, "Панель управления", "Система управления датчиками и параметрами отопления")
+System(APIGateway, "АПИ Гейтвей", "Единая точка входа в сервис")
+System(DeviceManagmentSystem, "Управление устройствами", "Система управления устройствами")
+System(TelemetrySystem, "Управление телеметрией", "Система сбора и анализа телеметрии")
+System(Auth, "Сервис аутентификации", "Система аутентификации и авторизации")
+System(Scenario, "Сценарии автоматизации", "Система управления клиентскими сценариями")
+System(HouseManagmenetSystem, "Управление домами", "Система управления домами")
+
+
+Container_Boundary(Backoffice, "Панель управления") {
+    Container(WebApp, "Web Application", "Java, Spring", "Позволяет клиенту настраивать устройства из Браузера")
+    Container(MobileApp, "Mobile Application", "Kotlin, Swift", "Позволяет клиенту настраивать устройства из c Телефона")
+}
+
+Container_Boundary(APIGateway, "API Gateway") {
+    Container(Gateway, "АПИ Гейтвей", "Kong", "Единая точка входа в сервис")
+}
+
+Container_Boundary(DeviceManagmentSystem, "Управление устройствами") {
+    Container(DeviceManagmentAPI, "DeviceManagment API", "Java, Spring", "Предоставляет АПИ для управления устройствами по протоколу REST")
+    ComponentDb(DeviceDatabase, "Database", "PostgreSQL", "Хранилище информации об устройствах и их настройках")
+    ComponentDb(Cache, "Cache", "Redis", "Кеш для списка подключенных устройств и их настроек")
+}
+
+Container_Boundary(TelemetrySystem, "Управление телеметрией") {
+    Container(TelemetryAPI, "Telemetry API", "Java, Spring", "Предоставляет АПИ для доступа к телеметрии")
+    ComponentQueue(Queue, "Queue", "Kafka", "Шина данных для телеметрии")
+    ComponentDb(TelemetryDatabase, "Database", "MongoDB", "Хранилище телметрии")
+}
+
+Container_Boundary(Auth, "Сервис аутентификации") {
+    Container(AuthAPI, "Auth API", "Java, Spring", "Предоставляет АПИ авторизации, аутентификации и регистрации пользователей")
+    ComponentDb(AuthDatabase, "Database", "PostgreSQL", "Хранилище информации об пользователях")
+}
+
+Container_Boundary(Scenario, "Управление устройствами") {
+    Container(ScenarioAPI, "Scenario API", "Java, Spring", "Предоставляет АПИ для создания и управления пользовательскими сценариями")
+    ComponentDb(ScenarioDatabase, "Database", "PostgreSQL", "Хранилище пользовательских сценариев")
+}
+
+Container_Boundary(HouseManagmenetSystem, "Управление устройствами") {
+    Container(HouseManagmenetAPI, "HouseManagmenet API", "Java, Spring", "Предоставляет АПИ для домами")
+    ComponentDb(HouseManagmenetSystemDatabase, "Database", "PostgreSQL", "Хранилище информации об домах")
+}
+
+System_Ext(Sensor, "Датчик", "Датчик установленный в доме")
+System_Ext(NotificationService, "Сервис для отправки СМС/EMAIL/PUSH", "Сервис для отправки СМС/EMAIL/PUSH")
+
+Rel(user, MobileApp, "Получает информацию о состоянии системы", "https")
+Rel(admin,WebApp, "Управляет системой", "https")
+
+Rel(DeviceManagmentAPI,Cache,"Проверяет данные в кеше", "http")
+Rel(DeviceManagmentAPI,DeviceDatabase,"Записать данные об подключенном устройстве", "SQL/TCP")
+Rel(DeviceManagmentAPI,DeviceDatabase,"Изменить параметры устройства", "SQL/TCP")
+
+Rel(Sensor,Gateway,"Отправляет данные с устройства", "https")
+Rel(Sensor,Gateway,"Регистрируется в системе", "https")
+
+Rel(AuthAPI,AuthDatabase,"Записать данные пользователе", "SQL/TCP")
+Rel(ScenarioAPI,ScenarioDatabase,"Записать данные сценарии", "SQL/TCP")
+Rel(HouseManagmenetAPI,HouseManagmenetSystemDatabase,"Изменить параметры дома", "SQL/TCP")
+
+Rel(Gateway,DeviceManagmentAPI,"Регистрирует датчик в системе", "http")
+Rel(Gateway,TelemetryAPI,"Отправляет метрику с датчика", "http")
+Rel(Gateway,AuthAPI,"Отправляет метрику с датчика", "http")
+Rel(Gateway,ScenarioAPI,"Отправляет метрику с датчика", "http")
+Rel(Gateway,HouseManagmenetAPI,"Отправляет метрику с датчика", "http")
+
+Rel(MobileApp,Gateway,"Получает информацию об устройстве","https")
+Rel(WebApp,Gateway,"Меняет настройки датчиков", "https")
+Rel(ScenarioAPI,NotificationService,"Отправляет уведопмление", "https")
+
+Rel(TelemetryAPI,Queue,"Отправляет метрику", "TCP")
+Rel(TelemetryAPI,TelemetryDatabase,"Получает телеметрию по устройству", "SQL/TCP")
+
+Rel(TelemetryAPI,DeviceManagmentAPI,"Проверяет зарегистрировано ли устройство", "http")
+
+@enduml

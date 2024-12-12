@@ -1,0 +1,24 @@
+@startuml
+title Система "Теплый дом"
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(HouseManagmenetSystem, "Управление устройствами") {
+  Container(HouseManagmenetAPI, "HouseManagmenet API", "Java, Spring", "Предоставляет АПИ для домами")
+  ComponentDb(HouseManagmenetSystemDatabase, "Database", "PostgreSQL", "Хранилище информации об домах")
+}
+
+Container(HouseManagmenetAPI, "Управление устройствами", "Java, Spring") {
+  Component(HouseService, "HouseService", "Обработка запросов по настройке дома")
+  Component(HouseController, "HouseController", "Обработка запросов по настройке дома")
+  Component(RepositoryLayer, "Repository Layer", "Слой доступа к данным")
+}
+
+Rel(HouseController,HouseService,"Управляет настройками дома")
+Rel(HouseService,RepositoryLayer,"Управляет настройками дома")
+
+Rel(RepositoryLayer,HouseManagmenetSystemDatabase,"Читает/Пишет данные")
+
+@enduml

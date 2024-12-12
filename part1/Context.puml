@@ -1,0 +1,26 @@
+@startuml
+title Система "Теплый дом"
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "User", "Пользователь системы умный дом")
+Person(admin, "Administrator", "Администратор системы")
+
+System(WarmHouseSystem, "Система Теплный дом", "Система управления датчиками и параметрами отопления", "Java, Spring Boot, PostgreSQL")
+
+Container_Boundary(WarmHouseSystem, "Панель управления", "Java, Spring Boot, PostgreSQL") {
+    Container(WebApp, "Web ", "Html, Css", "Веб сайт для настройки и управления системой")
+    Container(Backend, "Монолитный бекенд", "Java, Spring, PosgreSQL", "Единая точка входа в сервис")
+}
+
+System_Ext(sensor, "Датчик отопления", "Датчик отопления установленный в доме")
+
+Rel(user, WebApp, "Управляет датчиками", https)
+Rel(admin,WebApp, "Управляет системой", https)
+
+Rel(sensor,Backend,"Отправляет данные о температуре", https)
+Rel(WebApp,Backend,"Отправляет данные о температуре", https)
+
+@enduml

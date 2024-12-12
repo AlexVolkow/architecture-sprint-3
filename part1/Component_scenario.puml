@@ -1,0 +1,53 @@
+@startuml
+title Система "Теплый дом"
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(Scenario, "Управление устройствами") {
+  Container(ScenarioAPI, "Scenario API", "Java, Spring", "Предоставляет АПИ для создания и управления пользовательскими сценариями")
+  ComponentDb(ScenarioDatabase, "Database", "PostgreSQL", "Хранилище пользовательских сценариев")
+}
+
+Container_Boundary(DeviceManagmentSystem, "Управление устройствами") {
+    Container(DeviceManagmentAPI, "DeviceManagmentAPI API", "Java, Spring", "Предоставляет АПИ для управления устройствами по протоколу REST")
+}
+
+System_Ext(NotificationServiceExtEmail, "Сервис для отправки EMAIL/PUSH", "Сервис для отправки EMAIL/PUSH")
+System_Ext(NotificationServiceExtSMS, "Сервис для отправки СМС", "Сервис для отправки СМС")
+
+Container(ScenarioAPI, "Управление устройствами", "Java, Spring") {
+  Component(ScenarioController, "ScenarioController", "Обработка запросов по настройке пользовательских сценариев")
+  Component(CommandService, "CommandService", "Сервис управления командами")
+  Component(CommandExecutor, "CommandExecutor", "Выполняет команды над устройствами")
+  Component(CommandFactory, "CommandFactory", "Фабрика для получения команд")
+  Component(DeviceActivationCommand, "DeviceActivationCommand", "Команда на подключение устройств")
+  Component(ScenarioService, "ScenarioService", "Сервис для управления сценряими пользователей")
+  Component(RepositoryLayer, "Repository Layer", "Слой доступа к данным")
+  Component(NotificationService, "NotificationService", "Сервис для рассылки уведомлений")
+  Component(EmailNotificationSender, "EmailNotificationSender", "Адаптер для рассылки емейл уведомлений")
+  Component(SMSNotificationSender, "SMSNotificationSender", "Адаптер для рассылки СМС уведомлений")
+  Component(DeviceRegistry, "DeviceRegistry", "Реестр устройств")
+}
+
+Rel(CommandService,CommandFactory,"Получает команду на исполнение")
+Rel(CommandService,CommandExecutor,"Вызывает для выполнения команд")
+Rel(CommandService,DeviceRegistry,"Получает информацию об устройствах")
+Rel(CommandFactory,DeviceActivationCommand,"Формирует команду")
+Rel(ScenarioService,RepositoryLayer,"Читает/пишет данные о модулях")
+
+Rel(ScenarioController,ScenarioService,"Управляет сценариями пользователей")
+Rel(ScenarioService,DeviceRegistry,"Получает информацию об устройствах")
+Rel(ScenarioService,NotificationService,"Рассылает уведомления")
+Rel(ScenarioService,CommandService,"Получает команду на исполнение")
+Rel(DeviceRegistry,DeviceManagmentAPI,"Получает информацию об устройствах")
+Rel(CommandExecutor,RepositoryLayer,"Пишет/Читает данные из БД")
+Rel(CommandExecutor,NotificationService,"Рассылает уведомления")
+Rel(NotificationService,EmailNotificationSender,"Отправляет Email")
+Rel(NotificationService,SMSNotificationSender,"Отправляет СМС")
+Rel(SMSNotificationSender,NotificationServiceExtSMS,"Отправляет СМС")
+Rel(EmailNotificationSender,NotificationServiceExtEmail,"Отправляет Email")
+Rel(RepositoryLayer,ScenarioDatabase,"Читает/Пишет данные")
+
+@enduml
