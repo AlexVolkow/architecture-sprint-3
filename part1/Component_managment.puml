@@ -6,59 +6,28 @@ top to bottom direction
 !includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
 
 Container_Boundary(DeviceManagmentSystem, "Управление устройствами") {
-    Container(ManagmentAPI, "Managment API", "Java, Spring", "Предоставляет АПИ для управления устройствами по протоколу REST")
-    ComponentDb(Database, "Database", "PostgreSQL", "Хранилище информации об устройствах и их настройках")
-    ComponentDb(Cache, "Cache", "Redis", "Кеш для списка подключенных устройств и их настроек")
+  Container(DeviceManagmentAPI, "DeviceManagment API", "Java, Spring", "Предоставляет АПИ для управления устройствами по протоколу REST")
+  ComponentDb(Database, "Database", "PostgreSQL", "Хранилище информации об устройствах и их настройках")
+  ComponentDb(Cache, "Cache", "Redis", "Кеш для списка подключенных устройств и их настроек")
 }
 
-System_Ext(NotificationServiceExtEmail, "Сервис для отправки EMAIL/PUSH", "Сервис для отправки EMAIL/PUSH")
-System_Ext(NotificationServiceExtSMS, "Сервис для отправки СМС", "Сервис для отправки СМС")
-
-Container(ManagmentAPI, "Управление устройствами", "Java, Spring") {
+Container(DeviceManagmentAPI, "Управление устройствами", "Java, Spring") {
   Component(DeviceController, "DeviceController", "Обработка запросов по настройке устройств")
-  Component(ScenarioController, "ScenarioController", "Обработка запросов по настройке пользовательских сценариев")
   Component(ModuleController, "ModuleController", "Обработка запросов на настройку модулей")
   Component(ModuleService, "ModuleService", "Обработка запросов на настройку модулей")
-  Component(HouseService, "HouseService", "Обработка запросов по настройке дома")
-  Component(HouseController, "HouseController", "Обработка запросов по настройке дома")
-  Component(CommandService, "CommandService", "Сервис управления командами")
-  Component(CommandExecutor, "CommandExecutor", "Выполняет команды над устройствами")
-  Component(CommandFactory, "CommandFactory", "Фабрика для получения команд")
   Component(DeviceRegistry, "DeviceRegistry", "Реестр устройств")
   Component(DeviceSettingService, "DeviceSettingService", "Реестр настроект устройств")
-  Component(DeviceActivationCommand, "DeviceActivationCommand", "Команда на подключение устройств")
-  Component(ScenarioService, "ScenarioService", "Сервис для управления сценряими пользователей")
   Component(RepositoryLayer, "Repository Layer", "Слой доступа к данным")
   Component(CacheLayer, "Cache Layer", "Слой кеширования")
-  Component(NotificationService, "NotificationService", "Сервис для рассылки уведомлений")
-  Component(EmailNotificationSender, "EmailNotificationSender", "Адаптер для рассылки емейл уведомлений")
-  Component(SMSNotificationSender, "SMSNotificationSender", "Адаптер для рассылки СМС уведомлений")
 }
 
-Rel(CommandService,CommandFactory,"Получает команду на исполнение")
-Rel(CommandService,CommandExecutor,"Вызывает для выполнения команд")
-Rel(CommandService,DeviceRegistry,"Получает информацию об устройствах")
-Rel(DeviceController,CommandService,"Вызывает для выполнения команд")
-Rel(CommandFactory,DeviceActivationCommand,"Формирует команду")
 Rel(DeviceController,DeviceSettingService,"Управляет настройками устройств")
 Rel(ModuleController,ModuleService,"Управляет настройками модулей")
 Rel(ModuleService,RepositoryLayer,"Читает/пишет данные о модулях")
 Rel(ModuleService,DeviceRegistry,"Управляет настройками устройств")
-Rel(HouseController,HouseService,"Управляет настройками устройств")
-Rel(HouseService,RepositoryLayer,"Управляет настройками устройств")
 
-Rel(ScenarioController,ScenarioService,"Управляет сценариями пользователей")
-Rel(ScenarioService,DeviceRegistry,"Получает информацию об устройствах")
-Rel(ScenarioService,NotificationService,"Рассылает уведомления")
-Rel(ScenarioService,CommandService,"Получает команду на исполнение")
 Rel(DeviceRegistry,CacheLayer,"Получает информацию об устройствах из Кеша")
 Rel(DeviceRegistry,RepositoryLayer,"Получает информацию об устройствах из БД")
-Rel(CommandExecutor,RepositoryLayer,"Пишет/Читает данные из БД")
-Rel(CommandExecutor,NotificationService,"Рассылает уведомления")
-Rel(NotificationService,EmailNotificationSender,"Отправляет Email")
-Rel(NotificationService,SMSNotificationSender,"Отправляет СМС")
-Rel(SMSNotificationSender,NotificationServiceExtSMS,"Отправляет СМС")
-Rel(EmailNotificationSender,NotificationServiceExtEmail,"Отправляет Email")
 Rel(RepositoryLayer,Database,"Читает/Пишет данные")
 Rel(CacheLayer,Cache,"Читает/Пишет данные")
 

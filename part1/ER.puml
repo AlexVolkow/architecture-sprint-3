@@ -6,12 +6,13 @@ top to bottom direction
 !includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
 
 
+
 entity Device {
     *device_id: uuid
     --
     *house_id: uuid <<FK>>
     *device_type_id: uuid <<FK>>
-    *device_state: text
+    *device_state: DeviceState
     *serial_number: text
 }
 
@@ -30,7 +31,9 @@ entity User {
     *name: text
     *role: text
     phone: text
-    email: text
+    email: text,
+    password_hash: bytea,
+    password_salt: bytea
 }
 
 entity House {
@@ -45,20 +48,72 @@ entity Module {
     --
     *name: text
     *house_id: uuid <<FK>>
-    *module_state: text
+    *module_state: ModuleType
 }
 
 entity DeviceType {
-  *device_type_id: uuid
-  --
-  *name: text
+    *device_type_id: uuid
+    --
+    *name: text
+}
+
+
+entity Scenario {
+    *scenario_id: uuid
+    --
+    *name: text
+    *user_id: uuid <<FK>>
+}
+
+entity ScenarioStep {
+    *step_id: uuid
+    --
+    *name: text
+    *scenario_id: uuid <<FK>>
+    *trigger_id: uuid <<FK>>
+    *action_id: uuid <<FK>>
+}
+
+entity Trigger {
+    *trigger_id: uuid
+    --
+    *name: text
+    *code: text
+}
+
+entity Action {
+    *action_id: uuid
+    --
+    *name: text
+    *device_id: uuid <<FK>>
+}
+
+enum ValueType {
+    INT
+    DECIMAL
+    BYTE
+}
+
+enum ModuleType {
+    ACTIVE
+    INCATIVE
+}
+
+enum DeviceState {
+    ACTIVE
+    INCATIVE
 }
 
 User ||--o{ House
+User ||--o{ Scenario
 House ||--o{ Device
 Device ||--o{ TelemetryData
 Module ||--|{ Device
 House ||--o{ Module
 Device }o--|| DeviceType
+Scenario ||--o{ ScenarioStep
+ScenarioStep }o--|| Trigger
+ScenarioStep }o--|| Action
+Device }o--|{ Action
 
-@enduml 
+@enduml
