@@ -1,0 +1,32 @@
+@startuml
+title Система "Теплый дом"
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(APIGateway, "API Gateway") {
+    Container(Gateway, "АПИ Гейтвей", "Kong", "Единая точка входа в сервис")
+}
+
+Container(Gateway, "АПИ Гейтвей", "Kong") {
+  Component(Router, "Router", "Роутер запросов")
+  Component(SecurityComponent, "SecurityComponent", "Реализует функциональность авторизации/аутентификации")
+  Component(LoggingComponent, "LoggingComponent", "Реализует функциональность логирования/аудита")
+}
+
+Container_Boundary(DeviceManagmentSystem, "Управление устройствами") {
+    Container(ManagmentAPI, "Managment API", "Java, Spring", "Предоставляет АПИ для управления устройствами по протоколу REST")
+}
+
+Container_Boundary(TelemetrySystem, "Управление телеметрией") {
+    Container(TelemetryAPI, "Telemetry API", "Java, Spring", "Предоставляет АПИ для доступа к телеметрии")
+}
+
+Rel(Router,SecurityComponent,"Вызывает функции безопасности")
+Rel(Router,LoggingComponent,"Вызывает логирования")
+Rel(Router,ManagmentAPI,"Вызывает функции сервиса управления устройствами")
+Rel(Router,TelemetryAPI,"Вызывает функции сервиса управления телеметрией")
+
+
+@enduml

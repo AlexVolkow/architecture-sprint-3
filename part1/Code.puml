@@ -1,0 +1,116 @@
+@startuml
+title Система "Теплый дом". Класс ComandExecutor
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+interface Command {
+    +String name
+
+    +void execute()
+}
+
+class DeviceActivationCommand {
+    +String name
+    +Device Device
+    +User user
+    +void execute()
+}
+
+class CommandFactory {
+    +Command createDeviceActiveCommand(Device Device)
+}
+
+class CommandExecutor {
+    +void execute(Command command)
+}
+
+class Device {
+    +UUID deviceId
+    +House house
+    +DeviceType deviceType
+    +DeviceState deviceState
+    +List<TelemetryData> telemetry
+
+    +void turnOn()
+    +void turnOff()
+    +List<TelemetryData> getTelemetryData(int count)
+}
+
+interface TelemetryData  {
+    +UUID telemetryId
+    +ValueType valueType
+
+    +Object value()
+}
+
+enum ValueType {
+    DECIMAL
+    BOOLEAN
+    STREAM
+}
+
+class DeviceType {
+    +UUID typeId
+    +String name
+}
+
+enum DeviceState {
+    ACTIVE
+    DISABLE
+    ERROR
+}
+
+class DeviceRegistry {
+    +List<Device> Devices
+
+    +void register(Device Device)
+    +void delete(Device Device)
+}
+
+class User {
+    +UUID userId
+    +String name
+    +String role
+    +String email
+    +String phone
+}
+
+
+class House {
+    +UUID houseId
+    +String name
+    +User user
+    +Coordinates Coordinates
+}
+
+
+class Module {
+    +UUID moduleId
+    +String name
+    +House house
+    +List<Device> devices
+    +ModuleState moduleState
+
+    +void turnOn()
+    +void turnOff()
+}
+
+enum ModuleState {
+    ACTIVE
+    INACTIVE
+}
+
+Device "1" -- "0..*" TelemetryData : Содержит показания
+Device "1" -- "1" DeviceType : Имеет тип
+Device "1" -- "1" DeviceState : Имеет статус
+House "1" -- "0..*" Module : Установлено
+Module "1" -- "0..*" Device : Входят в модуль
+User "1" -- "0..*" House : Владеет
+Command <|.. DeviceActivationCommand: Реализует
+TelemetryData "1" -- "1" ValueType : Имеет тип счетчика
+CommandExecutor "1" -- "1" DeviceRegistry : Использует
+Device "1" -- "0..*" DeviceRegistry : Хранит
+
+@enduml 

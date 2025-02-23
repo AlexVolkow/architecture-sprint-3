@@ -1,0 +1,34 @@
+@startuml
+title Система "Теплый дом"
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(DeviceManagmentSystem, "Управление устройствами") {
+  Container(DeviceManagmentAPI, "DeviceManagment API", "Java, Spring", "Предоставляет АПИ для управления устройствами по протоколу REST")
+  ComponentDb(Database, "Database", "PostgreSQL", "Хранилище информации об устройствах и их настройках")
+  ComponentDb(Cache, "Cache", "Redis", "Кеш для списка подключенных устройств и их настроек")
+}
+
+Container(DeviceManagmentAPI, "Управление устройствами", "Java, Spring") {
+  Component(DeviceController, "DeviceController", "Обработка запросов по настройке устройств")
+  Component(ModuleController, "ModuleController", "Обработка запросов на настройку модулей")
+  Component(ModuleService, "ModuleService", "Обработка запросов на настройку модулей")
+  Component(DeviceRegistry, "DeviceRegistry", "Реестр устройств")
+  Component(DeviceSettingService, "DeviceSettingService", "Реестр настроект устройств")
+  Component(RepositoryLayer, "Repository Layer", "Слой доступа к данным")
+  Component(CacheLayer, "Cache Layer", "Слой кеширования")
+}
+
+Rel(DeviceController,DeviceSettingService,"Управляет настройками устройств")
+Rel(ModuleController,ModuleService,"Управляет настройками модулей")
+Rel(ModuleService,RepositoryLayer,"Читает/пишет данные о модулях")
+Rel(ModuleService,DeviceRegistry,"Управляет настройками устройств")
+
+Rel(DeviceRegistry,CacheLayer,"Получает информацию об устройствах из Кеша")
+Rel(DeviceRegistry,RepositoryLayer,"Получает информацию об устройствах из БД")
+Rel(RepositoryLayer,Database,"Читает/Пишет данные")
+Rel(CacheLayer,Cache,"Читает/Пишет данные")
+
+@enduml
